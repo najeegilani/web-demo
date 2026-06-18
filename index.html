@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bad Workflows — Mathematical Revenue Infrastructure</title>
+  <meta name="description" content="Bad Workflows builds and maintains the end-to-end cold email systems that transform outreach from a gamble into a mathematical certainty." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design tokens (cloned from source) ────────────────────────── */
+    :root {
+      --bg: #fbfaf7;
+      --bg-elev: #fff;
+      --fg: #0e1824;
+      --fg-muted: #48515c;
+      --fg-subtle: #80878f;
+      --border: #d7dbe0;
+      --border-soft: #e7eaed;
+      --accent: #0077e8;
+      --accent-soft: #0077e814;
+      --accent-fg: #fff;
+      --green: #2f9f3d;
+      --green-soft: #2f9f3d14;
+
+      --font-display: "Instrument Serif", Georgia, serif;
+      --font-sans: "Geist", "Helvetica Neue", Arial, sans-serif;
+      --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+
+      --text-display: clamp(2.75rem, 1.8rem + 4.5vw, 5.5rem);
+      --text-lead: clamp(1.0625rem, 0.95rem + 0.55vw, 1.3125rem);
+      --text-label: 0.75rem;
+
+      --leading-tight: 1.05;
+      --leading-snug: 1.22;
+      --tracking-tight: -0.022em;
+      --tracking-label: 0.16em;
+
+      --r-sm: 4px;
+      --r-md: 10px;
+      --r-lg: 14px;
+      --r-pill: 999px;
+
+      --shadow-card: 0 2px 8px #0c172312, 0 1px 2px #0c17230a, 0 0 0 1px var(--border);
+      --shadow-float: 0 8px 32px #0c17231f, 0 2px 6px #0c17230f, 0 0 0 1px var(--border);
+      --shadow-focus: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+
+      --container-max: 860px;
+      --container-wide: 780px;
+      --container-pad: clamp(1.25rem, 1rem + 2vw, 3rem);
+
+      --rule: 1px solid var(--border);
+      --ease: cubic-bezier(0.22, 0.8, 0.22, 1);
+      --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.5rem;
+      --space-6: 2rem;
+      --space-7: 3rem;
+      --space-8: 4rem;
+      --space-9: 6rem;
+
+      /* dark panel */
+      --dp-bg: #060d14;
+      --dp-primary: #f6f5f3;
+      --dp-secondary: rgba(246, 245, 243, 0.55);
+      --dp-subtle: rgba(246, 245, 243, 0.3);
+      --dp-accent: #5ba6ff;
+      --dp-border: rgba(246, 245, 243, 0.1);
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    p { margin: 0; }
+    ul, ol { margin: 0; padding: 0; list-style: none; }
+    a { color: inherit; text-decoration: none; }
+    hr {
+      border: none;
+      border-top: var(--rule);
+      margin: 0;
+    }
+
+    /* ── Layout helpers ─────────────────────────────────────────────── */
+    .container {
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--container-pad);
+    }
+    .container-wide {
+      max-width: var(--container-wide);
+      margin-inline: auto;
+      padding-inline: var(--container-pad);
+    }
+
+    /* ── Typography helpers ─────────────────────────────────────────── */
+    .label {
+      font-family: var(--font-sans);
+      font-size: var(--text-label);
+      font-weight: 500;
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--fg-subtle);
+    }
+    .mono {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--fg-subtle);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s var(--ease), transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--fg);
+      color: var(--bg);
+      padding: 0.625rem 1.125rem;
+      border-radius: var(--r-sm);
+      box-shadow: var(--shadow-float);
+    }
+    .btn-primary:hover { opacity: 0.88; }
+
+    .btn-secondary {
+      background: var(--bg-elev);
+      color: var(--fg);
+      padding: 0.5rem 1rem;
+      border-radius: var(--r-pill);
+      box-shadow: var(--shadow-card);
+    }
+    .btn-secondary:hover { box-shadow: var(--shadow-float); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--fg-muted);
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--r-sm);
+    }
+    .btn-ghost:hover { color: var(--fg); background: var(--border-soft); }
+
+    /* ── Nav ────────────────────────────────────────────────────────── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: var(--rule);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--container-pad);
+      gap: var(--space-4);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      font-weight: 400;
+      color: var(--fg);
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .nav-link {
+      font-size: 0.875rem;
+      color: var(--fg-muted);
+      padding: 0.375rem 0.625rem;
+      border-radius: var(--r-sm);
+      transition: color 0.15s var(--ease), background 0.15s var(--ease);
+    }
+    .nav-link:hover { color: var(--fg); background: var(--border-soft); }
+    .nav-link:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+    }
+
+    /* ── Hero ───────────────────────────────────────────────────────── */
+    .hero {
+      padding-top: var(--space-9);
+      padding-bottom: var(--space-8);
+    }
+    .hero-inner {
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--container-pad);
+    }
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-5);
+    }
+    .hero-label-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: var(--text-display);
+      font-weight: 400;
+      line-height: var(--leading-tight);
+      letter-spacing: var(--tracking-tight);
+      color: var(--fg);
+      margin: 0 0 var(--space-6) 0;
+      max-width: 18ch;
+    }
+    .hero-headline em {
+      font-style: italic;
+    }
+    .hero-body {
+      max-width: 56ch;
+      color: var(--fg-muted);
+      font-size: var(--text-lead);
+      line-height: 1.65;
+      margin-bottom: var(--space-5);
+    }
+    .hero-body strong {
+      color: var(--fg);
+      font-weight: 500;
+    }
+    .hero-tagline {
+      max-width: 56ch;
+      color: var(--fg);
+      font-size: 1rem;
+      line-height: 1.65;
+      margin-bottom: var(--space-6);
+    }
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .hero-footnote {
+      margin-top: var(--space-4);
+      font-size: 0.8125rem;
+      color: var(--fg-subtle);
+    }
+
+    /* ── Section separator ──────────────────────────────────────────── */
+    .section-sep {
+      padding-block: var(--space-8);
+    }
+    .section-sep-sm {
+      padding-block: var(--space-7);
+    }
+
+    /* ── Section header ─────────────────────────────────────────────── */
+    .section-header {
+      margin-bottom: var(--space-5);
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+      font-weight: 400;
+      line-height: var(--leading-snug);
+      letter-spacing: var(--tracking-tight);
+      color: var(--fg);
+      margin: var(--space-3) 0 0 0;
+    }
+
+    /* ── Pillars ────────────────────────────────────────────────────── */
+    .pillars {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .pillar-card {
+      background: var(--bg-elev);
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-card);
+      padding: var(--space-6);
+      transition: box-shadow 0.2s var(--ease);
+    }
+    .pillar-card:hover {
+      box-shadow: var(--shadow-float);
+    }
+    .pillar-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .pillar-num {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--fg-subtle);
+      letter-spacing: 0.08em;
+      padding-top: 0.2rem;
+      flex-shrink: 0;
+    }
+    .pillar-tag {
+      font-family: var(--font-sans);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--fg-subtle);
+      background: var(--border-soft);
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--r-pill);
+    }
+    .pillar-title {
+      font-family: var(--font-display);
+      font-size: 1.375rem;
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: var(--tracking-tight);
+      color: var(--fg);
+      margin: 0 0 var(--space-3) 0;
+    }
+    .pillar-desc {
+      font-size: 0.9375rem;
+      color: var(--fg-muted);
+      line-height: 1.6;
+      margin-bottom: var(--space-5);
+    }
+    .pillar-desc strong {
+      color: var(--fg);
+      font-weight: 500;
+    }
+    .pillar-bullets {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .pillar-bullet {
+      display: flex;
+      gap: var(--space-3);
+      align-items: flex-start;
+    }
+    .pillar-bullet-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pillar-bullet-icon svg {
+      width: 12px;
+      height: 12px;
+      color: var(--fg-subtle);
+    }
+    .pillar-bullet-text {
+      font-size: 0.875rem;
+      line-height: 1.55;
+      color: var(--fg-muted);
+    }
+    .pillar-bullet-text strong {
+      color: var(--fg);
+      font-weight: 500;
+    }
+    .pillar-bullet-text code {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      background: var(--border-soft);
+      padding: 0.1em 0.4em;
+      border-radius: var(--r-sm);
+      color: var(--accent);
+    }
+
+    /* ── Stats strip ────────────────────────────────────────────────── */
+    .stats-strip {
+      display: flex;
+      gap: var(--space-6);
+      flex-wrap: wrap;
+      padding: var(--space-7) 0;
+    }
+    .stat-item { flex: 1; min-width: 120px; }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 1.4rem + 3vw, 3.25rem);
+      font-weight: 400;
+      line-height: 1;
+      color: var(--fg);
+      margin-bottom: var(--space-2);
+    }
+    .stat-label {
+      font-size: 0.8125rem;
+      color: var(--fg-subtle);
+      line-height: 1.4;
+    }
+
+    /* ── Timeline ───────────────────────────────────────────────────── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline-item {
+      display: flex;
+      gap: var(--space-5);
+      padding-bottom: var(--space-6);
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-spine {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 24px;
+    }
+    .timeline-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--fg-muted);
+      flex-shrink: 0;
+      margin-top: 0.4rem;
+    }
+    .timeline-line {
+      width: 1px;
+      flex: 1;
+      background: var(--border);
+      margin-top: var(--space-2);
+      min-height: 24px;
+    }
+    .timeline-item:last-child .timeline-line { display: none; }
+    .timeline-phase {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--fg-subtle);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.25rem;
+    }
+    .timeline-title {
+      font-family: var(--font-sans);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: var(--space-2);
+    }
+    .timeline-body {
+      font-size: 0.875rem;
+      color: var(--fg-muted);
+      line-height: 1.6;
+    }
+    .timeline-body strong {
+      color: var(--fg);
+      font-weight: 500;
+    }
+
+    /* ── Utility cards grid ─────────────────────────────────────────── */
+    .utility-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-top: var(--space-6);
+    }
+    @media (max-width: 600px) {
+      .utility-grid { grid-template-columns: 1fr; }
+    }
+    .utility-card {
+      background: var(--bg-elev);
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-card);
+      padding: var(--space-5);
+    }
+    .utility-card-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--border-soft);
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-3);
+    }
+    .utility-card-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--fg-muted);
+    }
+    .utility-card-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: var(--space-2);
+    }
+    .utility-card-body {
+      font-size: 0.8125rem;
+      color: var(--fg-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Dark CTA panel ─────────────────────────────────────────────── */
+    .cta-panel {
+      background: var(--dp-bg);
+      padding-block: var(--space-9);
+    }
+    .cta-inner {
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--container-pad);
+    }
+    .cta-label {
+      font-size: var(--text-label);
+      font-weight: 500;
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--dp-secondary);
+      margin-bottom: var(--space-5);
+    }
+    .cta-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 1.2rem + 4vw, 4rem);
+      font-weight: 400;
+      line-height: var(--leading-tight);
+      letter-spacing: var(--tracking-tight);
+      color: var(--dp-primary);
+      margin: 0 0 var(--space-5) 0;
+      max-width: 20ch;
+    }
+    .cta-body {
+      font-size: var(--text-lead);
+      color: var(--dp-secondary);
+      line-height: 1.65;
+      max-width: 52ch;
+      margin-bottom: var(--space-6);
+    }
+    .cta-body strong {
+      color: var(--dp-primary);
+      font-weight: 500;
+    }
+    .btn-dp-primary {
+      display: inline-flex;
+      align-items: center;
+      background: var(--dp-primary);
+      color: var(--dp-bg);
+      padding: 0.75rem 1.375rem;
+      border-radius: var(--r-sm);
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s var(--ease), transform 0.15s var(--ease);
+    }
+    .btn-dp-primary:hover { opacity: 0.9; }
+    .btn-dp-primary:active { transform: translateY(1px); }
+    .btn-dp-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--dp-bg), 0 0 0 4px var(--dp-accent); }
+
+    .btn-dp-ghost {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      color: var(--dp-secondary);
+      padding: 0.75rem 1rem;
+      border-radius: var(--r-sm);
+      font-family: var(--font-sans);
+      font-size: 0.9375rem;
+      border: 1px solid var(--dp-border);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s var(--ease), color 0.15s var(--ease);
+    }
+    .btn-dp-ghost:hover {
+      background: rgba(246,245,243,0.06);
+      color: var(--dp-primary);
+    }
+    .btn-dp-ghost:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--dp-bg), 0 0 0 4px var(--dp-accent); }
+
+    .cta-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    /* ── Footer ─────────────────────────────────────────────────────── */
+    .footer {
+      background: var(--bg-elev);
+      border-top: var(--rule);
+      padding-block: var(--space-7);
+    }
+    .footer-inner {
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--container-pad);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-6);
+      flex-wrap: wrap;
+    }
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--fg);
+    }
+    .footer-tagline {
+      font-size: 0.8125rem;
+      color: var(--fg-subtle);
+      max-width: 28ch;
+      line-height: 1.5;
+    }
+    .footer-links {
+      display: flex;
+      gap: var(--space-5);
+      flex-wrap: wrap;
+      padding-top: 0.125rem;
+    }
+    .footer-link {
+      font-size: 0.8125rem;
+      color: var(--fg-subtle);
+      transition: color 0.15s var(--ease);
+    }
+    .footer-link:hover { color: var(--fg); }
+    .footer-copy {
+      width: 100%;
+      padding-top: var(--space-6);
+      border-top: var(--rule);
+      margin-top: var(--space-4);
+      font-size: 0.75rem;
+      color: var(--fg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ──────────────────────────────────────────────────────── -->
+  <header class="nav" role="banner">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Bad Workflows</a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#system" class="nav-link">How It Works</a>
+        <a href="#sequence" class="nav-link">The System</a>
+        <a href="#cta" class="nav-link">Book a Call</a>
+      </nav>
+      <a href="#cta" class="btn btn-primary">Book an Audit →</a>
+    </div>
+  </header>
+
+  <!-- ── Hero ─────────────────────────────────────────────────────── -->
+  <section class="hero" aria-labelledby="hero-headline">
+    <div class="hero-inner">
+      <div class="hero-label">
+        <span class="hero-label-dot" aria-hidden="true"></span>
+        <span class="label">Cold Email Infrastructure</span>
+      </div>
+      <h1 class="hero-headline" id="hero-headline">
+        Stop Fighting <em>Bad Workflows.</em> Own a Mathematical Revenue Engine.
+      </h1>
+      <p class="hero-body">
+        Most outbound efforts fail because they are built on <strong>Bad Workflows</strong>: manual list scraping, fragile infrastructure, and "hope-based" copywriting. In 2026, volume is no longer a luxury—it is a requirement to remove variance from your sales pipeline.
+      </p>
+      <p class="hero-tagline">
+        Bad Workflows builds and maintains the end-to-end cold email systems that transform outreach from a gamble into a mathematical certainty.
+      </p>
+      <div class="hero-cta">
+        <a href="#cta" class="btn btn-primary">Book an Infrastructure Audit →</a>
+      </div>
+      <p class="hero-footnote">No pitch calls. No retainers before results.</p>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- ── Stats strip ───────────────────────────────────────────────── -->
+  <div class="container">
+    <div class="stats-strip" role="list" aria-label="Key metrics">
+      <div class="stat-item" role="listitem">
+        <div class="stat-value">99</div>
+        <div class="stat-label">Mailboxes per domain, configured for high-density sending</div>
+      </div>
+      <div class="stat-item" role="listitem">
+        <div class="stat-value">500</div>
+        <div class="stat-label">Emails per day per domain without triggering bulk-send flags</div>
+      </div>
+      <div class="stat-item" role="listitem">
+        <div class="stat-value">90</div>
+        <div class="stat-label">Day build sequence before your first full-volume campaign</div>
+      </div>
+      <div class="stat-item" role="listitem">
+        <div class="stat-value">350+</div>
+        <div class="stat-label">Banned words filtered from every email before it sends</div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- ── Three Pillars ─────────────────────────────────────────────── -->
+  <section id="system" class="section-sep" aria-labelledby="pillars-title">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="label">The System</p>
+        <h2 class="section-title" id="pillars-title">The Three Pillars of Your Outbound System</h2>
+      </div>
+
+      <div class="pillars">
+
+        <!-- Pillar 1 -->
+        <article class="pillar-card">
+          <div class="pillar-card-header">
+            <span class="pillar-num">01</span>
+            <span class="pillar-tag">Technical Infrastructure</span>
+          </div>
+          <h3 class="pillar-title">The Sending Engine</h3>
+          <p class="pillar-desc">
+            We don't send from "disposable" or shared accounts. We build on <strong>Legitimate Microsoft 365 Infrastructure</strong>—the same ecosystem your B2B prospects already live in.
+          </p>
+          <ul class="pillar-bullets">
+            <li class="pillar-bullet">
+              <span class="pillar-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6h8M6 2l4 4-4 4"/>
+                </svg>
+              </span>
+              <span class="pillar-bullet-text"><strong>The 99-Mailbox Protocol:</strong> We configure every domain to support high-density sending (99 mailboxes per domain), allowing for nearly 500 emails per day per domain without triggering bulk-send flags.</span>
+            </li>
+            <li class="pillar-bullet">
+              <span class="pillar-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6h8M6 2l4 4-4 4"/>
+                </svg>
+              </span>
+              <span class="pillar-bullet-text"><strong>Ecosystem Trust:</strong> By sending from M365, your mail arrives from within the same ecosystem your B2B prospects use (Outlook-to-Outlook), giving you a structural deliverability advantage.</span>
+            </li>
+            <li class="pillar-bullet">
+              <span class="pillar-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6h8M6 2l4 4-4 4"/>
+                </svg>
+              </span>
+              <span class="pillar-bullet-text"><strong>The Technical Floor:</strong> <code>SPF</code>, <code>DKIM</code>, and <code>DMARC</code> are configured with a strict <code>p=reject</code> policy from day one. Every domain is aged 30–90 days before its first send.</span>
+            </li>
+          </ul>
+        </article>
+
+        <!-- Pillar 2 -->
+        <article class="pillar-card">
+          <div class="pillar-card-header">
+            <span class="pillar-num">02</span>
+            <span class="pillar-tag">Research &amp; Personalization</span>
+          </div>
+          <h3 class="pillar-title">The AI Operator</h3>
+          <p class="pillar-desc">
+            Real personalization requires research, and manual research doesn't scale. Our system uses <strong>Claude Code</strong> to act as a persistent operator inside your data—reading every prospect's website and building row-level context automatically.
+          </p>
+          <ul class="pillar-bullets">
+            <li class="pillar-bullet">
+              <span class="pillar-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6h8M6 2l4 4-4 4"/>
+                </svg>
+              </span>
+              <span class="pillar-bullet-text"><strong>Deep Website Intelligence:</strong> We use Cloudflare Browser Rendering to "read" every prospect's website, distilling their specific service lines and market focus into clean data.</span>
+            </li>
+            <li class="pillar-bullet">
+              <span class="pillar-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6h8M6 2l4 4-4 4"/>
+                </svg>
+              </span>
+              <span class="pillar-bullet-text"><strong>The Signal-to-Copy Chain:</strong> We turn scraped context into a "Business Signal." Our AI then fills intentional holes in your copy with row-level variables, ensuring every email reads like a human did their homework.</span>
+            </li>
+            <li class="pillar-bullet">
+              <span class="pillar-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6h8M6 2l4 4-4 4"/>
+                </svg>
+              </span>
+              <span class="pillar-bullet-text"><strong>Institutional Memory:</strong> Every reply and campaign win is captured in a local Obsidian vault, building a compounding "sales brain" that ensures month 12 campaigns are materially better than month 1.</span>
+            </li>
+          </ul>
+        </article>
+
+        <!-- Pillar 3 -->
+        <article class="pillar-card">
+          <div class="pillar-card-header">
+            <span class="pillar-num">03</span>
+            <span class="pillar-tag">Safety &amp; Variation</span>
+          </div>
+          <h3 class="pillar-title">The Deliverability Guard</h3>
+          <p class="pillar-desc">
+            To stay in the primary inbox, you must avoid looking like a robot. Every outgoing email runs through a multi-layer system designed to make your volume invisible to spam filters.
+          </p>
+          <ul class="pillar-bullets">
+            <li class="pillar-bullet">
+              <span class="pillar-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6h8M6 2l4 4-4 4"/>
+                </svg>
+              </span>
+              <span class="pillar-bullet-text"><strong>AI Spam Guard:</strong> Every word we generate passes through a seven-layer filter that blocks 350+ "banned words" that statistically trigger junk filters.</span>
+            </li>
+            <li class="pillar-bullet">
+              <span class="pillar-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6h8M6 2l4 4-4 4"/>
+                </svg>
+              </span>
+              <span class="pillar-bullet-text"><strong>2-Phase Spintax Audit:</strong> We use a holistic variation system to generate thousands of unique combinations of your email. No two prospects receive an identical "fingerprint," making your volume invisible to filters.</span>
+            </li>
+            <li class="pillar-bullet">
+              <span class="pillar-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6h8M6 2l4 4-4 4"/>
+                </svg>
+              </span>
+              <span class="pillar-bullet-text"><strong>Middle-Right Proximity:</strong> We strip out "setup language" and position your offer as close to the outcome—meetings and deal flow—as possible.</span>
+            </li>
+          </ul>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- ── 90-Day Sequence ────────────────────────────────────────────── -->
+  <section id="sequence" class="section-sep" aria-labelledby="sequence-title">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="label">Operational Rhythm</p>
+        <h2 class="section-title" id="sequence-title">The 90-Day Build Sequence</h2>
+        <p style="color: var(--fg-muted); font-size: 0.9375rem; line-height: 1.65; margin-top: var(--space-3); max-width: 56ch;">
+          We don't "turn on" campaigns overnight. We follow a disciplined operational rhythm to protect your sender reputation from day one.
+        </p>
+      </div>
+
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <div class="timeline-spine">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          <div class="timeline-content">
+            <p class="timeline-phase">Days 1–30</p>
+            <p class="timeline-title">Aging</p>
+            <p class="timeline-body">Your domains sit "parked" to accumulate neutral reputation with Microsoft and Google before sending a single email. No shortcuts here.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-spine">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          <div class="timeline-content">
+            <p class="timeline-phase">Days 31–45</p>
+            <p class="timeline-title">Warmup</p>
+            <p class="timeline-body">We run a 14-day minimum warmup cycle, gradually ramping from 1 to 10 emails per day per mailbox. Inbox placement is measured and verified continuously.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-spine">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          <div class="timeline-content">
+            <p class="timeline-phase">Day 46</p>
+            <p class="timeline-title">The Signal Pull</p>
+            <p class="timeline-body">We identify <strong>Public Signals</strong>—funding rounds, hiring spikes, or permit filings—to build a precision target list matched to your ICP.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-spine">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          <div class="timeline-content">
+            <p class="timeline-phase">Day 47+</p>
+            <p class="timeline-title">The Launch</p>
+            <p class="timeline-body">We start with a <strong>3,000-contact testing floor</strong> to find message resonance before scaling to full volume. No wasted sends, no reputation risk.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- ── Why "Can I Send It Over?" ─────────────────────────────────── -->
+  <section class="section-sep" aria-labelledby="utility-title">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="label">The Proximity Method</p>
+        <h2 class="section-title" id="utility-title">Why <em style="font-family: var(--font-display);">"Can I Send It Over?"</em></h2>
+        <p style="color: var(--fg-muted); font-size: 0.9375rem; line-height: 1.65; margin-top: var(--space-3); max-width: 58ch;">
+          We replace aggressive "Book a Meeting" CTAs with <strong style="color: var(--fg); font-weight: 500;">Utility-First Outreach</strong>. We build interactive HTML lead magnets—like ROI Calculators or Risk Scorers—that help your prospects interact with their own data.
+        </p>
+        <p style="color: var(--fg-muted); font-size: 0.9375rem; line-height: 1.65; margin-top: var(--space-4); max-width: 58ch;">
+          Instead of asking for their time, we offer them a gift. This lowers friction, increases curiosity, and results in a <strong style="color: var(--fg); font-weight: 500;">positive reply-to-meeting ratio</strong> that outperforms traditional pitching.
+        </p>
+      </div>
+
+      <div class="utility-grid">
+        <div class="utility-card">
+          <div class="utility-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="2" width="12" height="12" rx="2"/>
+              <path d="M5 8h6M5 5.5h3M5 10.5h4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="utility-card-title">ROI Calculator</p>
+          <p class="utility-card-body">Interactive tools that let prospects model their own revenue uplift using their actual numbers—before they've agreed to a meeting.</p>
+        </div>
+        <div class="utility-card">
+          <div class="utility-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M8 2l1.5 3.5 3.5.5-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="utility-card-title">Risk Scorer</p>
+          <p class="utility-card-body">Diagnostic tools that surface infrastructure gaps in their current outbound stack—positioning your system as the obvious solution.</p>
+        </div>
+        <div class="utility-card">
+          <div class="utility-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M2 11l3-3 2 2 4-4 3 3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="utility-card-title">Lower Friction</p>
+          <p class="utility-card-body">Prospects engage with value first. The meeting request follows naturally, from a position of demonstrated authority—not cold desperation.</p>
+        </div>
+        <div class="utility-card">
+          <div class="utility-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="8" cy="8" r="6"/>
+              <path d="M8 5v3l2 2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="utility-card-title">Compounding Replies</p>
+          <p class="utility-card-body">Every positive reply refines the signal chain in your institutional memory vault, making campaigns materially better each cycle.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- ── Dark CTA ───────────────────────────────────────────────────── -->
+  <section id="cta" class="cta-panel" aria-labelledby="cta-headline">
+    <div class="cta-inner">
+      <p class="cta-label">Request Your System Blueprint</p>
+      <h2 class="cta-headline" id="cta-headline">
+        Stop Wasting Margin on <em style="font-style: italic;">Bad Workflows.</em>
+      </h2>
+      <p class="cta-body">
+        Let us build the predictable revenue machine your business deserves. <strong>Book an Infrastructure Audit</strong> and we'll map out your full sending system, deliverability floor, and AI personalization stack—no pitch, no pressure.
+      </p>
+      <div class="cta-actions">
+        <a href="#" class="btn-dp-primary">Book an Infrastructure Audit →</a>
+        <a href="#system" class="btn-dp-ghost">See the full system</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ────────────────────────────────────────────────────── -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo">Bad Workflows</span>
+        <p class="footer-tagline">End-to-end cold email infrastructure. Built for operators who don't gamble with their pipeline.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#system" class="footer-link">How It Works</a>
+        <a href="#sequence" class="footer-link">The System</a>
+        <a href="#cta" class="footer-link">Book an Audit</a>
+      </nav>
+    </div>
+    <div class="container">
+      <div class="footer-copy">
+        <span>© 2026 Bad Workflows. All rights reserved.</span>
+        <span>Built on Legitimate Infrastructure.</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

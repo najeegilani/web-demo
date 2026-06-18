@@ -1,0 +1,268 @@
+{
+  "data": {
+    "branding": {
+      "colorScheme": "light",
+      "fonts": [
+        {
+          "family": "Geist",
+          "role": "body"
+        },
+        {
+          "family": "Helvetica Neue",
+          "role": "body"
+        },
+        {
+          "family": "Instrument Serif",
+          "role": "heading"
+        },
+        {
+          "family": "Fira Code",
+          "role": "monospace"
+        },
+        {
+          "family": "Georgia",
+          "role": "heading"
+        }
+      ],
+      "colors": {
+        "primary": "#48515C",
+        "secondary": "#DFEDF6",
+        "accent": "#0E1824",
+        "background": "#FBFAF7",
+        "textPrimary": "#0E1824",
+        "link": "#0E1824"
+      },
+      "typography": {
+        "fontFamilies": {
+          "primary": "Geist",
+          "heading": "Instrument Serif"
+        },
+        "fontStacks": {
+          "heading": [
+            "Instrument Serif",
+            "Georgia",
+            "serif"
+          ],
+          "body": [
+            "Geist",
+            "Helvetica Neue",
+            "Arial",
+            "sans-serif"
+          ],
+          "paragraph": [
+            "Geist",
+            "Helvetica Neue",
+            "Arial",
+            "sans-serif"
+          ]
+        },
+        "fontSizes": {
+          "h1": "96px",
+          "h2": "64px",
+          "body": "18px"
+        }
+      },
+      "spacing": {
+        "baseUnit": 4,
+        "borderRadius": "8px"
+      },
+      "components": {
+        "buttonPrimary": {
+          "background": "#0E1824",
+          "textColor": "#FBFAF7",
+          "borderRadius": "4px",
+          "borderRadiusCorners": {
+            "topLeft": "4px",
+            "topRight": "4px",
+            "bottomRight": "4px",
+            "bottomLeft": "4px"
+          },
+          "shadow": "lab(7.10301 -0.987217 -10.464 / 0.12) 0px 8px 32px 0px, lab(7.10301 -0.987217 -10.464 / 0.06) 0px 2px 6px 0px, lab(87.2239 -0.649899 -2.93518) 0px 0px 0px 1px"
+        },
+        "buttonSecondary": {
+          "background": "#FBFAF7",
+          "textColor": "#0E1824",
+          "borderColor": "#E7EAED",
+          "borderRadius": "999px",
+          "borderRadiusCorners": {
+            "topLeft": "999px",
+            "topRight": "999px",
+            "bottomRight": "999px",
+            "bottomLeft": "999px"
+          },
+          "shadow": "none"
+        }
+      },
+      "images": {
+        "logo": "https://advisoryincubator.com/_next/image?url=%2Fmind_map%2Fmind_map_logos_images%2Fadvisory_incubator_logo.png&w=48&q=75",
+        "favicon": "https://advisoryincubator.com/favicon/advisory_incubator_fav.png",
+        "ogImage": "https://advisoryincubator.com/advisory_incubator_site_image.png",
+        "logoHref": "https://advisoryincubator.fillout.com/join"
+      },
+      "__llm_logo_reasoning": {
+        "selectedIndex": 2,
+        "reasoning": "Selected #0 because it is located in the header, is visible, and matches the favicon, indicating it is the main brand logo.",
+        "confidence": 0.9,
+        "source": "llm"
+      },
+      "__llm_button_reasoning": {
+        "primary": {
+          "index": 1,
+          "text": "Get Started→",
+          "reasoning": "Button #1 'Get Started→' is a strong call-to-action with a dark, prominent background color (#0E1824), making it stand out as the primary CTA."
+        },
+        "secondary": {
+          "index": 3,
+          "text": "Ask Claude",
+          "reasoning": "Button #3 'Ask Claude' has a different background color (#FBFAF7) and serves as a secondary action with a less prominent style."
+        },
+        "confidence": 0.95
+      },
+      "personality": {
+        "tone": "professional",
+        "energy": "medium",
+        "targetAudience": "business professionals seeking AI advisory services"
+      },
+      "designSystem": {
+        "framework": "custom",
+        "componentLibrary": ""
+      },
+      "confidence": {
+        "buttons": 0.95,
+        "colors": 0.9,
+        "overall": 0.925
+      },
+      "__llm_metadata": {
+        "logoSelection": {
+          "llmCalled": true,
+          "llmSucceeded": true,
+          "finalSource": "llm",
+          "rawLogoSelection": {
+            "selectedLogoIndex": 0,
+            "selectedLogoReasoning": "Selected #0 because it is located in the header, is visible, and matches the favicon, indicating it is the main brand logo.",
+            "confidence": 0.9
+          }
+        },
+        "buttonClassification": {
+          "llmCalled": true,
+          "llmSucceeded": true
+        }
+      }
+    },
+    "metadata": {
+      "og:image:alt": "Advisory Incubator",
+      "og:image:height": "630",
+      "twitter:image": "https://advisoryincubator.com/advisory_incubator_site_image.png",
+      "description": "B2B demand generation and revenue advisory — built for operators, taught by one.",
+      "twitter:description": "B2B demand generation and revenue advisory — built for operators, taught by one.",
+      "og:title": "Advisory Incubator — AI Advisory Foundational Program",
+      "ogImage": "https://advisoryincubator.com/advisory_incubator_site_image.png",
+      "ogTitle": "Advisory Incubator — AI Advisory Foundational Program",
+      "title": "Advisory Incubator — AI Advisory Foundational Program",
+      "ogDescription": "B2B demand generation and revenue advisory — built for operators, taught by one.",
+      "og:description": "B2B demand generation and revenue advisory — built for operators, taught by one.",
+      "og:image": "https://advisoryincubator.com/advisory_incubator_site_image.png",
+      "twitter:card": "summary_large_image",
+      "twitter:title": "Advisory Incubator — AI Advisory Foundational Program",
+      "viewport": "width=device-width, initial-scale=1",
+      "og:url": "https://advisoryincubator.com",
+      "og:image:width": "1200",
+      "ogUrl": "https://advisoryincubator.com",
+      "language": "en",
+      "favicon": "https://advisoryincubator.com/favicon/advisory_incubator_fav.png",
+      "scrapeId": "019ed971-cad3-72f8-a860-9a087d900fcc",
+      "sourceURL": "https://advisoryincubator.com/",
+      "url": "https://advisoryincubator.com/",
+      "statusCode": 200,
+      "contentType": "text/html; charset=utf-8",
+      "timezone": "America/New_York",
+      "proxyUsed": "basic",
+      "indexId": "a94af089-ccd7-49c3-889f-7e6200020595",
+      "creditsUsed": 1,
+      "concurrencyLimited": false
+    }
+  },
+  "scrape_id": "019ed971-cad3-72f8-a860-9a087d900fcc",
+  "id": "HhqumcVhpDotv1X39RQVy",
+  "startedAt": "2026-06-18T06:35:23.243Z",
+  "endedAt": "2026-06-18T06:35:45.416Z",
+  "endpoint": "scrape",
+  "formState": {
+    "parseFile": null,
+    "parseFileMeta": null,
+    "extractSetupCompleted": false,
+    "urls": [],
+    "extractSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "company_mission": {
+          "type": "string"
+        },
+        "supports_sso": {
+          "type": "boolean"
+        },
+        "is_open_source": {
+          "type": "boolean"
+        },
+        "is_in_yc": {
+          "type": "boolean"
+        }
+      }
+    },
+    "extractPrompt": "Extract the company details, following the schema.",
+    "enableWebSearch": false,
+    "constrainUrls": false,
+    "options": {
+      "onlyMainContent": true,
+      "parsePDF": true,
+      "stealthMode": false,
+      "excludeTags": [],
+      "includeTags": [],
+      "waitFor": "",
+      "timeout": "",
+      "maxAge": "2 days",
+      "ignoreSitemap": false,
+      "crawlEntireDomain": false,
+      "sitemap": "include",
+      "limit": "10",
+      "maxDepth": "",
+      "excludePaths": [],
+      "includePaths": [],
+      "includeSubdomains": false,
+      "search": "",
+      "scrapeContentFromSearchResults": true,
+      "timeBasedSearch": "",
+      "location": "",
+      "prompt": ""
+    },
+    "formats": [
+      "branding"
+    ],
+    "sources": [
+      "web"
+    ],
+    "categories": [],
+    "jsonSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "company_name": {
+          "type": "string"
+        },
+        "company_description": {
+          "type": "string"
+        }
+      }
+    },
+    "jsonPrompt": "",
+    "questionPrompt": "",
+    "highlightsQuery": "",
+    "agent": {},
+    "url": "advisoryincubator.com/",
+    "endpoint": "scrape"
+  },
+  "status": "success",
+  "version": "dFwx2Thpenu0XMsjnMN03",
+  "isPreview": false
+}
