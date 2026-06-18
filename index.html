@@ -9,20 +9,32 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    /* ── Design tokens (cloned from source) ────────────────────────── */
+    /* ── Design tokens ──────────────────────────────────────────────── */
     :root {
-      --bg: #fbfaf7;
-      --bg-elev: #fff;
-      --fg: #0e1824;
-      --fg-muted: #48515c;
-      --fg-subtle: #80878f;
-      --border: #d7dbe0;
-      --border-soft: #e7eaed;
-      --accent: #0077e8;
-      --accent-soft: #0077e814;
+      /* Shader-aware surface vars */
+      --bg: transparent;
+      --bg-elev: #ffffff;
+
+      /* Text on dark shader background */
+      --fg: #eef2ff;
+      --fg-muted: rgba(185, 205, 255, 0.78);
+      --fg-subtle: rgba(145, 168, 230, 0.62);
+
+      /* Borders on dark bg */
+      --border: rgba(255, 255, 255, 0.11);
+      --border-soft: rgba(255, 255, 255, 0.07);
+
+      /* Card-interior overrides (always on white) */
+      --card-fg: #0e1824;
+      --card-fg-muted: #48515c;
+      --card-fg-subtle: #80878f;
+      --card-border: #d7dbe0;
+      --card-border-soft: #e7eaed;
+
+      --accent: #5ba6ff;
+      --accent-soft: rgba(91, 166, 255, 0.12);
       --accent-fg: #fff;
-      --green: #2f9f3d;
-      --green-soft: #2f9f3d14;
+      --green: #4fd66a;
 
       --font-display: "Instrument Serif", Georgia, serif;
       --font-sans: "Geist", "Helvetica Neue", Arial, sans-serif;
@@ -42,9 +54,10 @@
       --r-lg: 14px;
       --r-pill: 999px;
 
-      --shadow-card: 0 2px 8px #0c172312, 0 1px 2px #0c17230a, 0 0 0 1px var(--border);
-      --shadow-float: 0 8px 32px #0c17231f, 0 2px 6px #0c17230f, 0 0 0 1px var(--border);
-      --shadow-focus: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+      /* Shadows tuned for dark background */
+      --shadow-card: 0 4px 24px rgba(0, 5, 30, 0.45), 0 1px 4px rgba(0, 5, 30, 0.2), 0 0 0 1px rgba(255,255,255,0.07);
+      --shadow-float: 0 8px 40px rgba(0, 5, 30, 0.55), 0 2px 8px rgba(0, 5, 30, 0.3), 0 0 0 1px rgba(255,255,255,0.10);
+      --shadow-focus: 0 0 0 2px rgba(4,9,18,0.8), 0 0 0 4px var(--accent);
 
       --container-max: 860px;
       --container-wide: 780px;
@@ -63,20 +76,18 @@
       --space-8: 4rem;
       --space-9: 6rem;
 
-      /* dark panel */
-      --dp-bg: #060d14;
-      --dp-primary: #f6f5f3;
-      --dp-secondary: rgba(246, 245, 243, 0.55);
-      --dp-subtle: rgba(246, 245, 243, 0.3);
+      --dp-bg: rgba(4, 9, 20, 0.82);
+      --dp-primary: #f0f4ff;
+      --dp-secondary: rgba(185, 205, 255, 0.6);
       --dp-accent: #5ba6ff;
-      --dp-border: rgba(246, 245, 243, 0.1);
+      --dp-border: rgba(255, 255, 255, 0.1);
     }
 
     /* ── Reset ──────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
+      background: transparent;
       color: var(--fg);
       font-family: var(--font-sans);
       font-size: 1rem;
@@ -94,18 +105,13 @@
     a { color: inherit; text-decoration: none; }
     hr {
       border: none;
-      border-top: var(--rule);
+      border-top: 1px solid rgba(255, 255, 255, 0.10);
       margin: 0;
     }
 
     /* ── Layout helpers ─────────────────────────────────────────────── */
     .container {
       max-width: var(--container-max);
-      margin-inline: auto;
-      padding-inline: var(--container-pad);
-    }
-    .container-wide {
-      max-width: var(--container-wide);
       margin-inline: auto;
       padding-inline: var(--container-pad);
     }
@@ -117,11 +123,6 @@
       font-weight: 500;
       letter-spacing: var(--tracking-label);
       text-transform: uppercase;
-      color: var(--fg-subtle);
-    }
-    .mono {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
       color: var(--fg-subtle);
     }
 
@@ -143,38 +144,23 @@
     .btn:active { transform: translateY(1px); }
 
     .btn-primary {
-      background: var(--fg);
-      color: var(--bg);
+      background: rgba(232, 240, 255, 0.94);
+      color: #060d14;
       padding: 0.625rem 1.125rem;
       border-radius: var(--r-sm);
-      box-shadow: var(--shadow-float);
+      box-shadow: 0 4px 20px rgba(0, 0, 60, 0.4), 0 1px 3px rgba(0,0,40,0.2);
     }
     .btn-primary:hover { opacity: 0.88; }
-
-    .btn-secondary {
-      background: var(--bg-elev);
-      color: var(--fg);
-      padding: 0.5rem 1rem;
-      border-radius: var(--r-pill);
-      box-shadow: var(--shadow-card);
-    }
-    .btn-secondary:hover { box-shadow: var(--shadow-float); }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--fg-muted);
-      padding: 0.5rem 0.75rem;
-      border-radius: var(--r-sm);
-    }
-    .btn-ghost:hover { color: var(--fg); background: var(--border-soft); }
 
     /* ── Nav ────────────────────────────────────────────────────────── */
     .nav {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: var(--bg);
-      border-bottom: var(--rule);
+      background: rgba(4, 9, 20, 0.72);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
     }
     .nav-inner {
       display: flex;
@@ -190,7 +176,7 @@
       font-family: var(--font-display);
       font-size: 1.125rem;
       font-weight: 400;
-      color: var(--fg);
+      color: #eef2ff;
       flex-shrink: 0;
     }
     .nav-links {
@@ -200,12 +186,12 @@
     }
     .nav-link {
       font-size: 0.875rem;
-      color: var(--fg-muted);
+      color: rgba(175, 198, 255, 0.72);
       padding: 0.375rem 0.625rem;
       border-radius: var(--r-sm);
       transition: color 0.15s var(--ease), background 0.15s var(--ease);
     }
-    .nav-link:hover { color: var(--fg); background: var(--border-soft); }
+    .nav-link:hover { color: #eef2ff; background: rgba(255,255,255,0.08); }
     .nav-link:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
 
     @media (max-width: 640px) {
@@ -240,13 +226,11 @@
       font-weight: 400;
       line-height: var(--leading-tight);
       letter-spacing: var(--tracking-tight);
-      color: var(--fg);
+      color: #f0f4ff;
       margin: 0 0 var(--space-6) 0;
       max-width: 18ch;
     }
-    .hero-headline em {
-      font-style: italic;
-    }
+    .hero-headline em { font-style: italic; }
     .hero-body {
       max-width: 56ch;
       color: var(--fg-muted);
@@ -254,13 +238,10 @@
       line-height: 1.65;
       margin-bottom: var(--space-5);
     }
-    .hero-body strong {
-      color: var(--fg);
-      font-weight: 500;
-    }
+    .hero-body strong { color: #eef2ff; font-weight: 500; }
     .hero-tagline {
       max-width: 56ch;
-      color: var(--fg);
+      color: rgba(210, 222, 255, 0.85);
       font-size: 1rem;
       line-height: 1.65;
       margin-bottom: var(--space-6);
@@ -274,132 +255,20 @@
     .hero-footnote {
       margin-top: var(--space-4);
       font-size: 0.8125rem;
-      color: var(--fg-subtle);
+      color: rgba(130, 155, 215, 0.6);
     }
 
-    /* ── Section separator ──────────────────────────────────────────── */
-    .section-sep {
-      padding-block: var(--space-8);
-    }
-    .section-sep-sm {
-      padding-block: var(--space-7);
-    }
-
-    /* ── Section header ─────────────────────────────────────────────── */
-    .section-header {
-      margin-bottom: var(--space-5);
-    }
+    /* ── Section ────────────────────────────────────────────────────── */
+    .section-sep { padding-block: var(--space-8); }
+    .section-header { margin-bottom: var(--space-5); }
     .section-title {
       font-family: var(--font-display);
       font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem);
       font-weight: 400;
       line-height: var(--leading-snug);
       letter-spacing: var(--tracking-tight);
-      color: var(--fg);
+      color: #f0f4ff;
       margin: var(--space-3) 0 0 0;
-    }
-
-    /* ── Pillars ────────────────────────────────────────────────────── */
-    .pillars {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-    .pillar-card {
-      background: var(--bg-elev);
-      border-radius: var(--r-md);
-      box-shadow: var(--shadow-card);
-      padding: var(--space-6);
-      transition: box-shadow 0.2s var(--ease);
-    }
-    .pillar-card:hover {
-      box-shadow: var(--shadow-float);
-    }
-    .pillar-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: var(--space-4);
-      margin-bottom: var(--space-4);
-    }
-    .pillar-num {
-      font-family: var(--font-mono);
-      font-size: 0.6875rem;
-      color: var(--fg-subtle);
-      letter-spacing: 0.08em;
-      padding-top: 0.2rem;
-      flex-shrink: 0;
-    }
-    .pillar-tag {
-      font-family: var(--font-sans);
-      font-size: 0.6875rem;
-      font-weight: 500;
-      letter-spacing: var(--tracking-label);
-      text-transform: uppercase;
-      color: var(--fg-subtle);
-      background: var(--border-soft);
-      padding: 0.25rem 0.625rem;
-      border-radius: var(--r-pill);
-    }
-    .pillar-title {
-      font-family: var(--font-display);
-      font-size: 1.375rem;
-      font-weight: 400;
-      line-height: 1.2;
-      letter-spacing: var(--tracking-tight);
-      color: var(--fg);
-      margin: 0 0 var(--space-3) 0;
-    }
-    .pillar-desc {
-      font-size: 0.9375rem;
-      color: var(--fg-muted);
-      line-height: 1.6;
-      margin-bottom: var(--space-5);
-    }
-    .pillar-desc strong {
-      color: var(--fg);
-      font-weight: 500;
-    }
-    .pillar-bullets {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-3);
-    }
-    .pillar-bullet {
-      display: flex;
-      gap: var(--space-3);
-      align-items: flex-start;
-    }
-    .pillar-bullet-icon {
-      width: 18px;
-      height: 18px;
-      flex-shrink: 0;
-      margin-top: 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .pillar-bullet-icon svg {
-      width: 12px;
-      height: 12px;
-      color: var(--fg-subtle);
-    }
-    .pillar-bullet-text {
-      font-size: 0.875rem;
-      line-height: 1.55;
-      color: var(--fg-muted);
-    }
-    .pillar-bullet-text strong {
-      color: var(--fg);
-      font-weight: 500;
-    }
-    .pillar-bullet-text code {
-      font-family: var(--font-mono);
-      font-size: 0.8125rem;
-      background: var(--border-soft);
-      padding: 0.1em 0.4em;
-      border-radius: var(--r-sm);
-      color: var(--accent);
     }
 
     /* ── Stats strip ────────────────────────────────────────────────── */
@@ -415,7 +284,7 @@
       font-size: clamp(2rem, 1.4rem + 3vw, 3.25rem);
       font-weight: 400;
       line-height: 1;
-      color: var(--fg);
+      color: #f0f4ff;
       margin-bottom: var(--space-2);
     }
     .stat-label {
@@ -424,12 +293,85 @@
       line-height: 1.4;
     }
 
-    /* ── Timeline ───────────────────────────────────────────────────── */
-    .timeline {
+    /* ── Pillar cards (white cards on dark bg) ──────────────────────── */
+    .pillars {
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: var(--space-4);
     }
+    .pillar-card {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-card);
+      padding: var(--space-6);
+      transition: box-shadow 0.2s var(--ease), transform 0.2s var(--ease);
+    }
+    .pillar-card:hover {
+      box-shadow: var(--shadow-float);
+      transform: translateY(-1px);
+    }
+    .pillar-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .pillar-num {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--card-fg-subtle);
+      letter-spacing: 0.08em;
+      padding-top: 0.2rem;
+      flex-shrink: 0;
+    }
+    .pillar-tag {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--card-fg-subtle);
+      background: var(--card-border-soft);
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--r-pill);
+    }
+    .pillar-title {
+      font-family: var(--font-display);
+      font-size: 1.375rem;
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: var(--tracking-tight);
+      color: var(--card-fg);
+      margin: 0 0 var(--space-3) 0;
+    }
+    .pillar-desc {
+      font-size: 0.9375rem;
+      color: var(--card-fg-muted);
+      line-height: 1.6;
+      margin-bottom: var(--space-5);
+    }
+    .pillar-desc strong { color: var(--card-fg); font-weight: 500; }
+    .pillar-bullets { display: flex; flex-direction: column; gap: var(--space-3); }
+    .pillar-bullet { display: flex; gap: var(--space-3); align-items: flex-start; }
+    .pillar-bullet-icon {
+      width: 18px; height: 18px;
+      flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pillar-bullet-icon svg { width: 12px; height: 12px; color: var(--card-fg-subtle); }
+    .pillar-bullet-text { font-size: 0.875rem; line-height: 1.55; color: var(--card-fg-muted); }
+    .pillar-bullet-text strong { color: var(--card-fg); font-weight: 500; }
+    .pillar-bullet-text code {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      background: var(--card-border-soft);
+      padding: 0.1em 0.4em;
+      border-radius: var(--r-sm);
+      color: #0077e8;
+    }
+
+    /* ── Timeline ───────────────────────────────────────────────────── */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
     .timeline-item {
       display: flex;
       gap: var(--space-5);
@@ -437,24 +379,18 @@
     }
     .timeline-item:last-child { padding-bottom: 0; }
     .timeline-spine {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex-shrink: 0;
-      width: 24px;
+      display: flex; flex-direction: column;
+      align-items: center; flex-shrink: 0; width: 24px;
     }
     .timeline-dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: var(--fg-muted);
-      flex-shrink: 0;
-      margin-top: 0.4rem;
+      background: rgba(185, 205, 255, 0.55);
+      flex-shrink: 0; margin-top: 0.4rem;
     }
     .timeline-line {
-      width: 1px;
-      flex: 1;
-      background: var(--border);
+      width: 1px; flex: 1;
+      background: rgba(255, 255, 255, 0.1);
       margin-top: var(--space-2);
       min-height: 24px;
     }
@@ -467,69 +403,49 @@
       margin-bottom: 0.25rem;
     }
     .timeline-title {
-      font-family: var(--font-sans);
       font-size: 0.9375rem;
       font-weight: 500;
-      color: var(--fg);
+      color: #eef2ff;
       margin-bottom: var(--space-2);
     }
-    .timeline-body {
-      font-size: 0.875rem;
-      color: var(--fg-muted);
-      line-height: 1.6;
-    }
-    .timeline-body strong {
-      color: var(--fg);
-      font-weight: 500;
-    }
+    .timeline-body { font-size: 0.875rem; color: var(--fg-muted); line-height: 1.6; }
+    .timeline-body strong { color: #eef2ff; font-weight: 500; }
 
-    /* ── Utility cards grid ─────────────────────────────────────────── */
+    /* ── Utility cards ──────────────────────────────────────────────── */
     .utility-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: var(--space-4);
       margin-top: var(--space-6);
     }
-    @media (max-width: 600px) {
-      .utility-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 600px) { .utility-grid { grid-template-columns: 1fr; } }
     .utility-card {
-      background: var(--bg-elev);
+      background: rgba(255, 255, 255, 0.97);
       border-radius: var(--r-md);
       box-shadow: var(--shadow-card);
       padding: var(--space-5);
+      transition: box-shadow 0.2s var(--ease), transform 0.2s var(--ease);
     }
+    .utility-card:hover { box-shadow: var(--shadow-float); transform: translateY(-1px); }
     .utility-card-icon {
-      width: 32px;
-      height: 32px;
-      background: var(--border-soft);
+      width: 32px; height: 32px;
+      background: var(--card-border-soft);
       border-radius: var(--r-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       margin-bottom: var(--space-3);
     }
-    .utility-card-icon svg {
-      width: 16px;
-      height: 16px;
-      color: var(--fg-muted);
-    }
-    .utility-card-title {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--fg);
-      margin-bottom: var(--space-2);
-    }
-    .utility-card-body {
-      font-size: 0.8125rem;
-      color: var(--fg-muted);
-      line-height: 1.6;
-    }
+    .utility-card-icon svg { width: 16px; height: 16px; color: var(--card-fg-muted); }
+    .utility-card-title { font-size: 0.875rem; font-weight: 500; color: var(--card-fg); margin-bottom: var(--space-2); }
+    .utility-card-body { font-size: 0.8125rem; color: var(--card-fg-muted); line-height: 1.6; }
 
     /* ── Dark CTA panel ─────────────────────────────────────────────── */
     .cta-panel {
-      background: var(--dp-bg);
+      background: rgba(4, 9, 20, 0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       padding-block: var(--space-9);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     .cta-inner {
       max-width: var(--container-max);
@@ -561,15 +477,11 @@
       max-width: 52ch;
       margin-bottom: var(--space-6);
     }
-    .cta-body strong {
-      color: var(--dp-primary);
-      font-weight: 500;
-    }
+    .cta-body strong { color: var(--dp-primary); font-weight: 500; }
     .btn-dp-primary {
-      display: inline-flex;
-      align-items: center;
+      display: inline-flex; align-items: center;
       background: var(--dp-primary);
-      color: var(--dp-bg);
+      color: #060d14;
       padding: 0.75rem 1.375rem;
       border-radius: var(--r-sm);
       font-family: var(--font-sans);
@@ -582,11 +494,9 @@
     }
     .btn-dp-primary:hover { opacity: 0.9; }
     .btn-dp-primary:active { transform: translateY(1px); }
-    .btn-dp-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--dp-bg), 0 0 0 4px var(--dp-accent); }
-
+    .btn-dp-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(4,9,20,0.8), 0 0 0 4px var(--dp-accent); }
     .btn-dp-ghost {
-      display: inline-flex;
-      align-items: center;
+      display: inline-flex; align-items: center;
       background: transparent;
       color: var(--dp-secondary);
       padding: 0.75rem 1rem;
@@ -598,23 +508,16 @@
       text-decoration: none;
       transition: background 0.15s var(--ease), color 0.15s var(--ease);
     }
-    .btn-dp-ghost:hover {
-      background: rgba(246,245,243,0.06);
-      color: var(--dp-primary);
-    }
-    .btn-dp-ghost:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--dp-bg), 0 0 0 4px var(--dp-accent); }
-
-    .cta-actions {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      flex-wrap: wrap;
-    }
+    .btn-dp-ghost:hover { background: rgba(255,255,255,0.06); color: var(--dp-primary); }
+    .btn-dp-ghost:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(4,9,20,0.8), 0 0 0 4px var(--dp-accent); }
+    .cta-actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 
     /* ── Footer ─────────────────────────────────────────────────────── */
     .footer {
-      background: var(--bg-elev);
-      border-top: var(--rule);
+      background: rgba(4, 9, 20, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-top: 1px solid rgba(255,255,255,0.08);
       padding-block: var(--space-7);
     }
     .footer-inner {
@@ -627,50 +530,28 @@
       gap: var(--space-6);
       flex-wrap: wrap;
     }
-    .footer-brand {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-    .footer-logo {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      color: var(--fg);
-    }
-    .footer-tagline {
-      font-size: 0.8125rem;
-      color: var(--fg-subtle);
-      max-width: 28ch;
-      line-height: 1.5;
-    }
-    .footer-links {
-      display: flex;
-      gap: var(--space-5);
-      flex-wrap: wrap;
-      padding-top: 0.125rem;
-    }
-    .footer-link {
-      font-size: 0.8125rem;
-      color: var(--fg-subtle);
-      transition: color 0.15s var(--ease);
-    }
-    .footer-link:hover { color: var(--fg); }
+    .footer-brand { display: flex; flex-direction: column; gap: var(--space-2); }
+    .footer-logo { font-family: var(--font-display); font-size: 1rem; color: #eef2ff; }
+    .footer-tagline { font-size: 0.8125rem; color: var(--fg-subtle); max-width: 28ch; line-height: 1.5; }
+    .footer-links { display: flex; gap: var(--space-5); flex-wrap: wrap; padding-top: 0.125rem; }
+    .footer-link { font-size: 0.8125rem; color: var(--fg-subtle); transition: color 0.15s var(--ease); }
+    .footer-link:hover { color: #eef2ff; }
     .footer-copy {
       width: 100%;
       padding-top: var(--space-6);
-      border-top: var(--rule);
+      border-top: 1px solid rgba(255,255,255,0.08);
       margin-top: var(--space-4);
       font-size: 0.75rem;
       color: var(--fg-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-4);
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--space-4); flex-wrap: wrap;
     }
   </style>
 </head>
 <body>
+
+  <!-- ── WebGL shader background ──────────────────────────────────── -->
+  <canvas id="bg-canvas" style="position:fixed;inset:0;width:100%;height:100%;z-index:-1;display:block;"></canvas>
 
   <!-- ── Nav ──────────────────────────────────────────────────────── -->
   <header class="nav" role="banner">
@@ -745,7 +626,6 @@
 
       <div class="pillars">
 
-        <!-- Pillar 1 -->
         <article class="pillar-card">
           <div class="pillar-card-header">
             <span class="pillar-num">01</span>
@@ -757,33 +637,20 @@
           </p>
           <ul class="pillar-bullets">
             <li class="pillar-bullet">
-              <span class="pillar-bullet-icon" aria-hidden="true">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6h8M6 2l4 4-4 4"/>
-                </svg>
-              </span>
+              <span class="pillar-bullet-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg></span>
               <span class="pillar-bullet-text"><strong>The 99-Mailbox Protocol:</strong> We configure every domain to support high-density sending (99 mailboxes per domain), allowing for nearly 500 emails per day per domain without triggering bulk-send flags.</span>
             </li>
             <li class="pillar-bullet">
-              <span class="pillar-bullet-icon" aria-hidden="true">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6h8M6 2l4 4-4 4"/>
-                </svg>
-              </span>
+              <span class="pillar-bullet-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg></span>
               <span class="pillar-bullet-text"><strong>Ecosystem Trust:</strong> By sending from M365, your mail arrives from within the same ecosystem your B2B prospects use (Outlook-to-Outlook), giving you a structural deliverability advantage.</span>
             </li>
             <li class="pillar-bullet">
-              <span class="pillar-bullet-icon" aria-hidden="true">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6h8M6 2l4 4-4 4"/>
-                </svg>
-              </span>
+              <span class="pillar-bullet-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg></span>
               <span class="pillar-bullet-text"><strong>The Technical Floor:</strong> <code>SPF</code>, <code>DKIM</code>, and <code>DMARC</code> are configured with a strict <code>p=reject</code> policy from day one. Every domain is aged 30–90 days before its first send.</span>
             </li>
           </ul>
         </article>
 
-        <!-- Pillar 2 -->
         <article class="pillar-card">
           <div class="pillar-card-header">
             <span class="pillar-num">02</span>
@@ -795,33 +662,20 @@
           </p>
           <ul class="pillar-bullets">
             <li class="pillar-bullet">
-              <span class="pillar-bullet-icon" aria-hidden="true">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6h8M6 2l4 4-4 4"/>
-                </svg>
-              </span>
+              <span class="pillar-bullet-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg></span>
               <span class="pillar-bullet-text"><strong>Deep Website Intelligence:</strong> We use Cloudflare Browser Rendering to "read" every prospect's website, distilling their specific service lines and market focus into clean data.</span>
             </li>
             <li class="pillar-bullet">
-              <span class="pillar-bullet-icon" aria-hidden="true">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6h8M6 2l4 4-4 4"/>
-                </svg>
-              </span>
+              <span class="pillar-bullet-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg></span>
               <span class="pillar-bullet-text"><strong>The Signal-to-Copy Chain:</strong> We turn scraped context into a "Business Signal." Our AI then fills intentional holes in your copy with row-level variables, ensuring every email reads like a human did their homework.</span>
             </li>
             <li class="pillar-bullet">
-              <span class="pillar-bullet-icon" aria-hidden="true">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6h8M6 2l4 4-4 4"/>
-                </svg>
-              </span>
+              <span class="pillar-bullet-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg></span>
               <span class="pillar-bullet-text"><strong>Institutional Memory:</strong> Every reply and campaign win is captured in a local Obsidian vault, building a compounding "sales brain" that ensures month 12 campaigns are materially better than month 1.</span>
             </li>
           </ul>
         </article>
 
-        <!-- Pillar 3 -->
         <article class="pillar-card">
           <div class="pillar-card-header">
             <span class="pillar-num">03</span>
@@ -833,27 +687,15 @@
           </p>
           <ul class="pillar-bullets">
             <li class="pillar-bullet">
-              <span class="pillar-bullet-icon" aria-hidden="true">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6h8M6 2l4 4-4 4"/>
-                </svg>
-              </span>
+              <span class="pillar-bullet-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg></span>
               <span class="pillar-bullet-text"><strong>AI Spam Guard:</strong> Every word we generate passes through a seven-layer filter that blocks 350+ "banned words" that statistically trigger junk filters.</span>
             </li>
             <li class="pillar-bullet">
-              <span class="pillar-bullet-icon" aria-hidden="true">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6h8M6 2l4 4-4 4"/>
-                </svg>
-              </span>
+              <span class="pillar-bullet-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg></span>
               <span class="pillar-bullet-text"><strong>2-Phase Spintax Audit:</strong> We use a holistic variation system to generate thousands of unique combinations of your email. No two prospects receive an identical "fingerprint," making your volume invisible to filters.</span>
             </li>
             <li class="pillar-bullet">
-              <span class="pillar-bullet-icon" aria-hidden="true">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6h8M6 2l4 4-4 4"/>
-                </svg>
-              </span>
+              <span class="pillar-bullet-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg></span>
               <span class="pillar-bullet-text"><strong>Middle-Right Proximity:</strong> We strip out "setup language" and position your offer as close to the outcome—meetings and deal flow—as possible.</span>
             </li>
           </ul>
@@ -872,61 +714,44 @@
       <div class="section-header">
         <p class="label">Operational Rhythm</p>
         <h2 class="section-title" id="sequence-title">The 90-Day Build Sequence</h2>
-        <p style="color: var(--fg-muted); font-size: 0.9375rem; line-height: 1.65; margin-top: var(--space-3); max-width: 56ch;">
+        <p style="color:var(--fg-muted);font-size:0.9375rem;line-height:1.65;margin-top:var(--space-3);max-width:56ch;">
           We don't "turn on" campaigns overnight. We follow a disciplined operational rhythm to protect your sender reputation from day one.
         </p>
       </div>
 
       <div class="timeline">
-
         <div class="timeline-item">
-          <div class="timeline-spine">
-            <div class="timeline-dot"></div>
-            <div class="timeline-line"></div>
-          </div>
+          <div class="timeline-spine"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
           <div class="timeline-content">
             <p class="timeline-phase">Days 1–30</p>
             <p class="timeline-title">Aging</p>
             <p class="timeline-body">Your domains sit "parked" to accumulate neutral reputation with Microsoft and Google before sending a single email. No shortcuts here.</p>
           </div>
         </div>
-
         <div class="timeline-item">
-          <div class="timeline-spine">
-            <div class="timeline-dot"></div>
-            <div class="timeline-line"></div>
-          </div>
+          <div class="timeline-spine"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
           <div class="timeline-content">
             <p class="timeline-phase">Days 31–45</p>
             <p class="timeline-title">Warmup</p>
             <p class="timeline-body">We run a 14-day minimum warmup cycle, gradually ramping from 1 to 10 emails per day per mailbox. Inbox placement is measured and verified continuously.</p>
           </div>
         </div>
-
         <div class="timeline-item">
-          <div class="timeline-spine">
-            <div class="timeline-dot"></div>
-            <div class="timeline-line"></div>
-          </div>
+          <div class="timeline-spine"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
           <div class="timeline-content">
             <p class="timeline-phase">Day 46</p>
             <p class="timeline-title">The Signal Pull</p>
             <p class="timeline-body">We identify <strong>Public Signals</strong>—funding rounds, hiring spikes, or permit filings—to build a precision target list matched to your ICP.</p>
           </div>
         </div>
-
         <div class="timeline-item">
-          <div class="timeline-spine">
-            <div class="timeline-dot"></div>
-            <div class="timeline-line"></div>
-          </div>
+          <div class="timeline-spine"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
           <div class="timeline-content">
             <p class="timeline-phase">Day 47+</p>
             <p class="timeline-title">The Launch</p>
             <p class="timeline-body">We start with a <strong>3,000-contact testing floor</strong> to find message resonance before scaling to full volume. No wasted sends, no reputation risk.</p>
           </div>
         </div>
-
       </div>
 
     </div>
@@ -940,51 +765,33 @@
 
       <div class="section-header">
         <p class="label">The Proximity Method</p>
-        <h2 class="section-title" id="utility-title">Why <em style="font-family: var(--font-display);">"Can I Send It Over?"</em></h2>
-        <p style="color: var(--fg-muted); font-size: 0.9375rem; line-height: 1.65; margin-top: var(--space-3); max-width: 58ch;">
-          We replace aggressive "Book a Meeting" CTAs with <strong style="color: var(--fg); font-weight: 500;">Utility-First Outreach</strong>. We build interactive HTML lead magnets—like ROI Calculators or Risk Scorers—that help your prospects interact with their own data.
+        <h2 class="section-title" id="utility-title">Why <em style="font-family:var(--font-display);">"Can I Send It Over?"</em></h2>
+        <p style="color:var(--fg-muted);font-size:0.9375rem;line-height:1.65;margin-top:var(--space-3);max-width:58ch;">
+          We replace aggressive "Book a Meeting" CTAs with <strong style="color:#eef2ff;font-weight:500;">Utility-First Outreach</strong>. We build interactive HTML lead magnets—like ROI Calculators or Risk Scorers—that help your prospects interact with their own data.
         </p>
-        <p style="color: var(--fg-muted); font-size: 0.9375rem; line-height: 1.65; margin-top: var(--space-4); max-width: 58ch;">
-          Instead of asking for their time, we offer them a gift. This lowers friction, increases curiosity, and results in a <strong style="color: var(--fg); font-weight: 500;">positive reply-to-meeting ratio</strong> that outperforms traditional pitching.
+        <p style="color:var(--fg-muted);font-size:0.9375rem;line-height:1.65;margin-top:var(--space-4);max-width:58ch;">
+          Instead of asking for their time, we offer them a gift. This lowers friction, increases curiosity, and results in a <strong style="color:#eef2ff;font-weight:500;">positive reply-to-meeting ratio</strong> that outperforms traditional pitching.
         </p>
       </div>
 
       <div class="utility-grid">
         <div class="utility-card">
-          <div class="utility-card-icon" aria-hidden="true">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="2" y="2" width="12" height="12" rx="2"/>
-              <path d="M5 8h6M5 5.5h3M5 10.5h4" stroke-linecap="round"/>
-            </svg>
-          </div>
+          <div class="utility-card-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 8h6M5 5.5h3M5 10.5h4" stroke-linecap="round"/></svg></div>
           <p class="utility-card-title">ROI Calculator</p>
           <p class="utility-card-body">Interactive tools that let prospects model their own revenue uplift using their actual numbers—before they've agreed to a meeting.</p>
         </div>
         <div class="utility-card">
-          <div class="utility-card-icon" aria-hidden="true">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M8 2l1.5 3.5 3.5.5-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
+          <div class="utility-card-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l1.5 3.5 3.5.5-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <p class="utility-card-title">Risk Scorer</p>
           <p class="utility-card-body">Diagnostic tools that surface infrastructure gaps in their current outbound stack—positioning your system as the obvious solution.</p>
         </div>
         <div class="utility-card">
-          <div class="utility-card-icon" aria-hidden="true">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M2 11l3-3 2 2 4-4 3 3" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
+          <div class="utility-card-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11l3-3 2 2 4-4 3 3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <p class="utility-card-title">Lower Friction</p>
           <p class="utility-card-body">Prospects engage with value first. The meeting request follows naturally, from a position of demonstrated authority—not cold desperation.</p>
         </div>
         <div class="utility-card">
-          <div class="utility-card-icon" aria-hidden="true">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="8" cy="8" r="6"/>
-              <path d="M8 5v3l2 2" stroke-linecap="round"/>
-            </svg>
-          </div>
+          <div class="utility-card-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2" stroke-linecap="round"/></svg></div>
           <p class="utility-card-title">Compounding Replies</p>
           <p class="utility-card-body">Every positive reply refines the signal chain in your institutional memory vault, making campaigns materially better each cycle.</p>
         </div>
@@ -1000,7 +807,7 @@
     <div class="cta-inner">
       <p class="cta-label">Request Your System Blueprint</p>
       <h2 class="cta-headline" id="cta-headline">
-        Stop Wasting Margin on <em style="font-style: italic;">Bad Workflows.</em>
+        Stop Wasting Margin on <em style="font-style:italic;">Bad Workflows.</em>
       </h2>
       <p class="cta-body">
         Let us build the predictable revenue machine your business deserves. <strong>Book an Infrastructure Audit</strong> and we'll map out your full sending system, deliverability floor, and AI personalization stack—no pitch, no pressure.
@@ -1032,6 +839,245 @@
       </div>
     </div>
   </footer>
+
+  <!-- ── WebGL Shader Background ───────────────────────────────────── -->
+  <script>
+  (function () {
+    const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+in vec2 v_uv;
+uniform vec3  iResolution;
+uniform float iTime;
+uniform int   iFrame;
+uniform vec4  iMouse;
+
+const float GRID_SCALE   = 18.0;
+const float MAJOR_STEP   = 4.0;
+const float THIN_WIDTH   = 0.010;
+const float MAJOR_WIDTH  = 0.018;
+const float SCROLL_SPEED = 0.02;
+const float VIGNETTE_AMT = 0.28;
+const float MESH_AMT     = 0.85;
+const float NOISE_AMT    = 0.030;
+const float DITHER_DARK  = 0.010;
+const float DITHER_LIGHT = 0.004;
+const float ASCII_AMT    = 0.23;
+const float ASCII_SCALE  = 26.0;
+const float ASCII_EVERY  = 2.0;
+
+mat2 rot(float a){ float c=cos(a),s=sin(a); return mat2(c,-s,s,c); }
+
+float bayer4(vec2 p){
+  ivec2 ip=ivec2(int(mod(p.x,4.0)),int(mod(p.y,4.0)));
+  int idx=ip.y*4+ip.x;
+  int m[16]; m[0]=0;m[1]=8;m[2]=2;m[3]=10;m[4]=12;m[5]=4;m[6]=14;m[7]=6;
+  m[8]=3;m[9]=11;m[10]=1;m[11]=9;m[12]=15;m[13]=7;m[14]=13;m[15]=5;
+  return float(m[idx])/15.0;
+}
+
+float hash21(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
+float vnoise(vec2 p){
+  vec2 i=floor(p),f=fract(p);
+  float a=hash21(i),b=hash21(i+vec2(1,0)),c=hash21(i+vec2(0,1)),d=hash21(i+vec2(1,1));
+  vec2 u=f*f*(3.0-2.0*f);
+  return mix(mix(a,b,u.x),mix(c,d,u.x),u.y);
+}
+
+float gridLineAA(vec2 uv,float scale,float width){
+  vec2 g=abs(fract(uv*scale)-0.5);
+  float d=min(g.x,g.y);
+  float aa=fwidth(d);
+  return 1.0-smoothstep(width,width+aa,d);
+}
+float majorGridAA(vec2 uv,float scale,float stepN,float width){
+  float sMajor=max(1.0,scale/stepN);
+  return gridLineAA(uv,sMajor,width);
+}
+
+vec3 meshGradient(vec2 uv){
+  vec2 p0=vec2(-0.70,-0.45),p1=vec2(0.75,-0.35),p2=vec2(-0.65,0.65),p3=vec2(0.80,0.55);
+  vec3 c0=vec3(0.05,0.10,0.26),c1=vec3(0.08,0.16,0.36),c2=vec3(0.03,0.09,0.22),c3=vec3(0.10,0.20,0.40);
+  float e=2.0;
+  float w0=pow(1.0/(0.2+distance(uv,p0)),e);
+  float w1=pow(1.0/(0.2+distance(uv,p1)),e);
+  float w2=pow(1.0/(0.2+distance(uv,p2)),e);
+  float w3=pow(1.0/(0.2+distance(uv,p3)),e);
+  float ws=w0+w1+w2+w3;
+  return (c0*w0+c1*w1+c2*w2+c3*w3)/ws;
+}
+
+float sdLineX(vec2 p,float w){ return 1.0-smoothstep(w,w+fwidth(p.y),abs(p.y)); }
+float sdLineY(vec2 p,float w){ return 1.0-smoothstep(w,w+fwidth(p.x),abs(p.x)); }
+float sdDiag1(vec2 p,float w){ float d=abs(p.x+p.y)/sqrt(2.0); return 1.0-smoothstep(w,w+fwidth(d),d); }
+float sdDiag2(vec2 p,float w){ float d=abs(p.x-p.y)/sqrt(2.0); return 1.0-smoothstep(w,w+fwidth(d),d); }
+float sdDot(vec2 p,float r){ float d=length(p); return 1.0-smoothstep(r,r+fwidth(d),d); }
+
+float asciiGlyph(vec2 cellUV,float level){
+  vec2 p=cellUV; float w=0.11,r=0.10;
+  float g0=sdDot(p,r),g1=sdLineX(p,w),g2=sdLineY(p,w),
+        g3=max(sdLineX(p,w),sdLineY(p,w)),
+        g4=sdDiag1(p,w),g5=sdDiag2(p,w),
+        g6=max(sdDiag1(p,w),sdDiag2(p,w)),
+        g7=max(sdLineX(p,w),max(sdLineY(p,w),g6));
+  float m=0.;
+  m=mix(m,g0,smoothstep(0.00,0.12,level)*(1.0-step(level,0.12)));
+  m=mix(m,g1,smoothstep(0.12,0.28,level)*(1.0-step(level,0.28)));
+  m=mix(m,g2,smoothstep(0.28,0.44,level)*(1.0-step(level,0.44)));
+  m=mix(m,g3,smoothstep(0.44,0.60,level)*(1.0-step(level,0.60)));
+  m=mix(m,g4,smoothstep(0.60,0.72,level)*(1.0-step(level,0.72)));
+  m=mix(m,g5,smoothstep(0.72,0.84,level)*(1.0-step(level,0.84)));
+  m=mix(m,g6,smoothstep(0.84,0.94,level)*(1.0-step(level,0.94)));
+  m=mix(m,g7,smoothstep(0.94,1.00,level));
+  return clamp(m,0.0,1.0);
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord){
+  vec2 R=iResolution.xy;
+  float t=iTime;
+  vec2 uv=(fragCoord-0.5*R)/max(R.y,1.0);
+
+  vec3 baseDeep=vec3(0.03,0.06,0.12);
+  vec3 baseTint=vec3(0.05,0.09,0.18);
+  float vgrad=smoothstep(-0.92,0.55,-uv.y);
+  vec3 bg=mix(baseDeep,baseTint,vgrad);
+  bg=mix(bg,meshGradient(uv),MESH_AMT);
+  float rad=length(uv);
+  float vig=pow(1.0-VIGNETTE_AMT*rad,1.0);
+  bg*=clamp(vig,0.0,1.0);
+
+  vec2 scrollDir=normalize(vec2(1.0,-0.55));
+  vec2 uvAnim=uv+SCROLL_SPEED*t*scrollDir;
+
+  float thin=gridLineAA(uvAnim,GRID_SCALE,THIN_WIDTH);
+  float major=majorGridAA(uvAnim,GRID_SCALE,MAJOR_STEP,MAJOR_WIDTH);
+
+  vec3 lineThin=vec3(0.58,0.66,0.95);
+  vec3 lineMajor=vec3(0.78,0.84,1.00);
+
+  vec3 col=bg+lineThin*thin*0.25+lineMajor*major*0.52;
+
+  vec2 uMajor=uvAnim*(GRID_SCALE/MAJOR_STEP);
+  vec2 idx=floor(uMajor+0.5);
+  float selX=1.0-step(0.001,abs(fract(idx.x/ASCII_EVERY)));
+  float selY=1.0-step(0.001,abs(fract(idx.y/ASCII_EVERY)));
+  float asciiLineSel=max(selX,selY);
+
+  if(ASCII_AMT>0.001){
+    vec2 aUV=uv*ASCII_SCALE;
+    vec2 cellF=fract(aUV)-0.5;
+    float lvl=clamp(dot(col,vec3(0.2126,0.7152,0.0722)),0.0,1.0);
+    float glyph=asciiGlyph(cellF,lvl);
+    float nearMajor=major;
+    float asciiMask=asciiLineSel*nearMajor;
+    vec3 asciiColor=mix(vec3(0.50,0.70,1.0),meshGradient(uv),0.25);
+    col=mix(col,col+asciiColor*glyph*0.30,ASCII_AMT*asciiMask);
+  }
+
+  float n=vnoise(fragCoord*0.6+vec2(t*12.0,-t*9.0));
+  col+=(n-0.5)*NOISE_AMT;
+
+  float luma=dot(col,vec3(0.2126,0.7152,0.0722));
+  float dAmt=mix(DITHER_DARK,DITHER_LIGHT,luma);
+  col+=(bayer4(fragCoord)-0.5)*dAmt;
+
+  col=tanh(col);
+  fragColor=vec4(col,1.0);
+}
+
+void main(){ mainImage(fragColor,gl_FragCoord.xy); }`;
+
+    const VERT = `#version 300 es
+precision highp float;
+layout(location=0) in vec2 a_pos;
+out vec2 v_uv;
+void main(){ v_uv=a_pos*0.5+0.5; gl_Position=vec4(a_pos,0.0,1.0); }`;
+
+    const canvas = document.getElementById('bg-canvas');
+    const gl = canvas.getContext('webgl2', { premultipliedAlpha: false });
+    if (!gl) { canvas.style.display = 'none'; return; }
+
+    function compile(type, src) {
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(sh));
+        return null;
+      }
+      return sh;
+    }
+
+    const vs = compile(gl.VERTEX_SHADER, VERT);
+    const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return;
+
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    gl.deleteShader(vs);
+    gl.deleteShader(fs);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      console.error(gl.getProgramInfoLog(prog));
+      return;
+    }
+
+    const vao = gl.createVertexArray();
+    const vbo = gl.createBuffer();
+    gl.bindVertexArray(vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes   = gl.getUniformLocation(prog, 'iResolution');
+    const uTime  = gl.getUniformLocation(prog, 'iTime');
+    const uFrame = gl.getUniformLocation(prog, 'iFrame');
+    const uMouse = gl.getUniformLocation(prog, 'iMouse');
+
+    let frame = 0, start = performance.now(), raf = null;
+    let mx = 0, my = 0, ml = 0;
+    let w = 0, h = 0, needResize = true;
+
+    function applySize() {
+      needResize = false;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const nw = Math.max(1, Math.floor(window.innerWidth * dpr));
+      const nh = Math.max(1, Math.floor(window.innerHeight * dpr));
+      if (canvas.width !== nw || canvas.height !== nh) {
+        canvas.width = nw; canvas.height = nh;
+        w = nw; h = nh;
+        gl.viewport(0, 0, nw, nh);
+      }
+    }
+
+    const ro = new ResizeObserver(() => { needResize = true; });
+    ro.observe(document.body);
+
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = window.innerHeight - e.clientY; });
+    document.addEventListener('mousedown', e => { if (e.button === 0) ml = 1; });
+    document.addEventListener('mouseup',   e => { if (e.button === 0) ml = 0; });
+
+    function tick(now) {
+      raf = requestAnimationFrame(tick);
+      if (needResize) applySize();
+      const t = (now - start) / 1000;
+      frame++;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      gl.useProgram(prog);
+      if (uRes)   gl.uniform3f(uRes, canvas.width, canvas.height, dpr);
+      if (uTime)  gl.uniform1f(uTime, t);
+      if (uFrame) gl.uniform1i(uFrame, frame);
+      if (uMouse) gl.uniform4f(uMouse, mx * dpr, my * dpr, ml, 0);
+      gl.bindVertexArray(vao);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
+    applySize();
+    raf = requestAnimationFrame(tick);
+  })();
+  </script>
 
 </body>
 </html>
